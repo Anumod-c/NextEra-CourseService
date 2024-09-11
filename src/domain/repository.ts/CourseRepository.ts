@@ -6,16 +6,18 @@ import { ICourseRepository } from "./ICourseRepository";
 
 export class CourseRepository implements ICourseRepository{
     async saveCourse(courseData:ICourse){
-        try{
-            console.log('course repository',courseData);
-            const newCourse = new Course(courseData);
-            await newCourse.save();
-            console.log('course saved successfully')
-            return
+        try{        
+            
+                const newCourse = new Course(courseData);
+                await newCourse.save();
+                console.log('Course saved successfully');
+            return { success: true, message: "Course saved sucessfully" };
              
         }catch(error){
             console.log('saveCourse error',error);
+            return { success: false, message: "Course couldnt save. Please try again" };
             
         }
     }
+   
 }

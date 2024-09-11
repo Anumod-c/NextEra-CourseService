@@ -10,6 +10,7 @@ export default class MessageHandler{
                 response = await courseController.addCourse(data);
                 console.log("data reached inside message handler.ts",response);
                 break;
+             
         }
         await RabbitMQClient.produce(response,correlationId,replyTo)
     }

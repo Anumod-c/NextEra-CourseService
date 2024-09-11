@@ -13,6 +13,7 @@ export interface Ilesson{
 
 
 export interface ICourse{
+    courseId?:string;
     courseTitle: string;
     courseDesc: string;
     coursePrice: number;  // Changed to number
@@ -20,7 +21,9 @@ export interface ICourse{
     courseCategory: string;
     courseLevel: string;
     demoURL: string;
-    thumbnail?: string;
-    prerequisite?: string[];
+    thumbnail: string;
+    prerequisite: string[];
     benifits: string[];
+    modules:IModules[]
+    
 }

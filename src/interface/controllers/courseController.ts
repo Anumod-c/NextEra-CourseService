@@ -12,12 +12,16 @@ class CourseController{
         try{
             console.log(courseData,'in controlerrr');
             const result = await this.courseService.addCourse(courseData);
+            console.log('got result from course.ts for addocourse');
+            
             return result
         }catch(error){
             console.log('error in addcourse',error);
             
         }
     }
+
+    
 }
 
 export const courseController = new CourseController()

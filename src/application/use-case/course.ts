@@ -14,10 +14,12 @@ export class CourseService{
         try{
             console.log('try');
             const result =await this.courseRepo.saveCourse(courseData)
+            return result
             
         }catch(error){
             console.log('catch');
             
         }
     }
+    
 }
