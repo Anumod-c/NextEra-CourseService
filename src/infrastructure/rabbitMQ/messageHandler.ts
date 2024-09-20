@@ -10,7 +10,20 @@ export default class MessageHandler{
                 response = await courseController.addCourse(data);
                 console.log("data reached inside message handler.ts",response);
                 break;
-             
+            case 'fetchAllCourse':
+                console.log('reached messagehandller for fetching all course',operations);
+                response= await courseController.fetchAllCourse()
+                break;
+            case 'courseList':
+                console.log('courselist worked in messagehandler',data,operations);
+                response = await courseController.courseList(data)
+                console.log('fsdfsdfsdfsdfsdfasdfsdf',response);
+               break;
+            case 'singleCourse':
+                console.log('single course reached courseservice  messagehandler ');
+                response = await courseController.singleCourse(data);
+                break;
+                
         }
         await RabbitMQClient.produce(response,correlationId,replyTo)
     }

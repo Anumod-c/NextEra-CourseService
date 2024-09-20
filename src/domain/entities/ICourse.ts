@@ -1,4 +1,4 @@
-export interface IModules{
+export interface ISections{
     title:string;
     description:string;
     lessons:Ilesson[]
@@ -24,6 +24,6 @@ export interface ICourse{
     thumbnail: string;
     prerequisite: string[];
     benifits: string[];
-    modules:IModules[]
+    sections:ISections[]
     
 }

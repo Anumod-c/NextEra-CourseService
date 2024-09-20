@@ -1,6 +1,5 @@
 import { CourseService } from "../../application/use-case/course";
 import { ICourse } from "../../domain/entities/ICourse";
-import { Course } from "../../model/Course";
 
 class CourseController{
     private courseService:CourseService;
@@ -20,6 +19,38 @@ class CourseController{
             
         }
     }
+    async fetchAllCourse() {
+        try{
+            const result = await this.courseService.fetchAllCourse();
+            console.log('reeslt from fetching course',result);
+            
+            return result
+        }catch(error){
+            console.log('error in addcourse',error);
+            
+        }
+    }
+    async courseList(tutorId:string){
+        try{
+            const result = await this.courseService.courseList(tutorId);
+            console.log('gggggggggggggggggggggggggg',result);
+            
+            return result;
+        }catch(error){
+            console.log('error in courselist',error);
+            
+        }
+    }
+    async singleCourse(courseId:string){
+        try {
+            const result = await this.courseService.singleCourse(courseId);
+            return result
+        } catch (error) {
+            console.log(error,"Error in single COursepage");
+            
+        }
+    }
+    
 
     
 }
