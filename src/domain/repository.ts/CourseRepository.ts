@@ -22,6 +22,7 @@ export class CourseRepository implements ICourseRepository{
     async fetchAllCourse(){
         try{
             const allCourse=await Course.find({});
+            
             console.log('allcourse',allCourse
 
             )
