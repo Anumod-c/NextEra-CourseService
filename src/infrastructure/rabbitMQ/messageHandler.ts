@@ -14,6 +14,11 @@ export default class MessageHandler{
                 console.log('reached messagehandller for fetching all course',operations);
                 response= await courseController.fetchAllCourse()
                 break;
+            case 'fetchLatestCourses':
+                console.log('reached messagehandller for fetching Latest course',operations);
+                response= await courseController.fetchLatestCourse();
+                break;
+
             case 'courseList':
                 console.log('courselist worked in messagehandler',data,operations);
                 response = await courseController.courseList(data)
@@ -23,7 +28,28 @@ export default class MessageHandler{
                 console.log('single course reached courseservice  messagehandler ');
                 response = await courseController.singleCourse(data);
                 break;
-                
+            case 'fetchMyCourses':
+                response  = await courseController.fetchMyCourses(data)
+                break;
+            case 'add_userId_to_course':
+                console.log('adduerid to course');
+                response = await courseController.addUserIdToCourse(data);
+                break;
+            case 'courseTable':
+                response =await courseController.coursetable();
+                break;
+            case 'get_courses_count':
+                response =await courseController.getCourseCount();
+                break;
+            case 'getTotalCoursesCount':
+                response = await courseController.getTotalCoursesCount(data);
+                break;
+            case 'getTotalStudentsCount':
+                response = await courseController.getTotalStudentsCount(data);
+                break;
+             case 'fetchCourseChatList':
+                response = await courseController.fetchCourseChatList(data);
+                break;
         }
         await RabbitMQClient.produce(response,correlationId,replyTo)
     }

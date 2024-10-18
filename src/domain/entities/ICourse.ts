@@ -21,6 +21,7 @@ export interface ICourse{
     courseCategory: string;
     courseLevel: string;
     demoURL: string;
+    enrolledUsers:string[]
     thumbnail: string;
     prerequisite: string[];
     benifits: string[];

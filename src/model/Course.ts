@@ -65,6 +65,10 @@ const courseSchema:Schema=new Schema({
       benefits: [{
         type: String, // Array of strings for benefits
       }],
+      enrolledUsers: [{  // Change to plural to match the code
+        type: Schema.Types.ObjectId,
+        ref: 'User', // Optional: If you want to reference the User model
+    }],
       sections: [sectionSchema], // Array of sections
     }, {
       timestamps: true, // Automatically add createdAt and updatedAt timestamps
