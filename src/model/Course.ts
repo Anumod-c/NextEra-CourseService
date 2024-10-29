@@ -47,6 +47,10 @@ const courseSchema:Schema=new Schema({
       discountPrice: {
         type: Number,
       },
+      status:{
+        type:Boolean,
+        default:true
+      },
       category: {
         type: String,
         required: true,

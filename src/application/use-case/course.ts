@@ -104,5 +104,15 @@ export class CourseService {
             console.log("Error  in fetchCourseChatList in course.ts",error)
         }
     }
+    async changeCourseStatus(data:{courseId:string;status:boolean}){
+        try{
+            const result :any= await this.courseRepo.changeCourseStatus(data);
+            return result
+         }
+         catch(error){
+             console.log('error in changing status',error);
+             
+         }
+    }
 }
 

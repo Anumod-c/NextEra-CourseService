@@ -19,7 +19,7 @@ export class CourseRepository implements ICourseRepository {
     }
     async fetchAllCourse() {
         try {
-            const allCourse = await Course.find({});
+            const allCourse = await Course.find({status:true});
             console.log("allcourse", allCourse);
             if (allCourse) {
                 return {
@@ -38,7 +38,7 @@ export class CourseRepository implements ICourseRepository {
     }
     async fetchLatestCourse() {
         try {
-            const LatestCourses = await Course.find({}).sort({ _id: -1 }).limit(5);
+            const LatestCourses = await Course.find({status:true}).sort({ _id: -1 }).limit(5);
             console.log("LatestCourses", LatestCourses);
             if (LatestCourses) {
                 return {
@@ -183,6 +183,25 @@ export class CourseRepository implements ICourseRepository {
             return { success: true, courses };
         } catch (error) {
             console.log("Error in fetching purhcased courselist for chat", error);
+        }
+    }
+    async changeCourseStatus(data:{courseId:string,status:boolean}){
+        try{
+            console.log('reached tutro for chaning status')
+            const updatedCourse = await Course.findByIdAndUpdate(data.courseId,{status:data.status},{new:true});
+
+            if(!updatedCourse){
+                throw new Error("Tutor not found to change status")
+            }
+            return{
+                success:true,
+                message:`Course ${data.status ? 'unblocked' : 'blocked'} successfully`,
+                course: updatedCourse,
+            }
+        }catch(error){
+              console.error('Error in Admin Repo (changeStatus):', error);
+            throw new Error('Error in changing tutor status');
+            
         }
     }
 }

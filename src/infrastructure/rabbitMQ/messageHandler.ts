@@ -50,6 +50,9 @@ export default class MessageHandler{
              case 'fetchCourseChatList':
                 response = await courseController.fetchCourseChatList(data);
                 break;
+            case 'change_course_status':
+                response = await courseController.changeCourseStatus(data);
+                break;
         }
         await RabbitMQClient.produce(response,correlationId,replyTo)
     }

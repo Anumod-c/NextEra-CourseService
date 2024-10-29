@@ -124,6 +124,16 @@ class CourseController{
             console.log("Error in fetching user course chat list",error)
         }
     }
+    async changeCourseStatus(data:{courseId:string;status:boolean}){
+        try{
+            const result = await this.courseService.changeCourseStatus(data);
+            return result
+         }
+         catch(error){
+             console.log('error in changing status',error);
+             
+         }
+    }
     
 }
 
