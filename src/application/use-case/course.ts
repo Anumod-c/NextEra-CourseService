@@ -1,4 +1,5 @@
 import { ICourse } from "../../domain/entities/ICourse";
+import { IReview } from "../../domain/entities/IReview";
 import { CourseRepository } from "../../domain/repository.ts/CourseRepository";
 
 export class CourseService {
@@ -16,9 +17,9 @@ export class CourseService {
             console.log("catch");
         }
     }
-    async fetchAllCourse() {
+    async fetchAllCourse(search:string) {
         try {
-            const result = await this.courseRepo.fetchAllCourse();
+            const result = await this.courseRepo.fetchAllCourse(search);
             return result;
         } catch (error) {
             console.log("error in fetching course in course.ts");
@@ -113,6 +114,27 @@ export class CourseService {
              console.log('error in changing status',error);
              
          }
+    }
+    async addReviewRating(data:IReview){
+        try {
+            console.log('data from review and rating',data)
+            const result = await this.courseRepo.addReviewRating(data);
+            console.log('resting',result)
+            return result
+        } catch (error) {
+            console.log("Error in posting review and rating",error)
+        }
+    }
+    async fetchReview(courseId:string){
+        try {
+            console.log('courseId from review and rating',courseId)
+            const result = await this.courseRepo.fetchReview(courseId);
+            console.log('resting2',result)
+
+            return result
+        } catch (error) {
+            console.log("Error in posting review and rating",error)
+        }
     }
 }
 

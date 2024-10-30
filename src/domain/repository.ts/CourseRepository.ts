@@ -1,5 +1,7 @@
 import { Course } from "../../model/Course";
+import { Review } from "../../model/Review";
 import { ICourse } from "../entities/ICourse";
+import { IReview } from "../entities/IReview";
 import { ICourseRepository } from "./ICourseRepository";
 
 export class CourseRepository implements ICourseRepository {
@@ -17,9 +19,10 @@ export class CourseRepository implements ICourseRepository {
             };
         }
     }
-    async fetchAllCourse() {
+    async fetchAllCourse(search:string) {
         try {
-            const allCourse = await Course.find({status:true});
+            console.log('fetchallcourse',search)
+            const allCourse = await Course.find({ title: { $regex: search, $options: "i" }, status: true });
             console.log("allcourse", allCourse);
             if (allCourse) {
                 return {
@@ -202,6 +205,34 @@ export class CourseRepository implements ICourseRepository {
               console.error('Error in Admin Repo (changeStatus):', error);
             throw new Error('Error in changing tutor status');
             
+        }
+    }
+
+  async addReviewRating(data:IReview){
+        try {
+            const { rating, review, userId, courseId }= data
+            console.log('data from review and rating',data)
+            const newReview = new Review({
+                rating,
+                review,
+                userId,
+                courseId,
+            });           
+            await newReview.save();
+            return {success:true,message:"Review posted succesfuly",newReview}
+        } catch (error) {
+            console.log("Error in posting review and rating",error)
+        }
+    }
+    async fetchReview(courseId:string){
+        try {
+            console.log('courseId from review and rating',courseId)
+            const newReview = await Review.find({courseId})
+            console.log('resting2',newReview)
+
+            return {success:true,newReview}
+        } catch (error) {
+            console.log("Error in posting review and rating",error)
         }
     }
 }

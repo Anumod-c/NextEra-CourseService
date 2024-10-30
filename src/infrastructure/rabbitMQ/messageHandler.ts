@@ -12,7 +12,7 @@ export default class MessageHandler{
                 break;
             case 'fetchAllCourse':
                 console.log('reached messagehandller for fetching all course',operations);
-                response= await courseController.fetchAllCourse()
+                response= await courseController.fetchAllCourse(data)
                 break;
             case 'fetchLatestCourses':
                 console.log('reached messagehandller for fetching Latest course',operations);
@@ -52,6 +52,12 @@ export default class MessageHandler{
                 break;
             case 'change_course_status':
                 response = await courseController.changeCourseStatus(data);
+                break;
+            case 'add_review_rating':
+                response = await courseController.addReviewRating(data);
+                break;
+            case 'fetch_review':
+                response = await courseController.fetchReview(data);
                 break;
         }
         await RabbitMQClient.produce(response,correlationId,replyTo)
