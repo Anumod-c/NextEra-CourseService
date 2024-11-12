@@ -11,10 +11,10 @@ const ReviewSchema= new mongoose.Schema({
     userId:{
         type:String,
     },
-    courseId:{
-        type:String,
+    courseId: {
+        type: Schema.Types.ObjectId,  
+        ref: 'Course' 
     }
-
 
 })
 

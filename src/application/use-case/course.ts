@@ -17,9 +17,9 @@ export class CourseService {
             console.log("catch");
         }
     }
-    async fetchAllCourse(search:string) {
+    async fetchAllCourse(filterOptions:any) {
         try {
-            const result = await this.courseRepo.fetchAllCourse(search);
+            const result = await this.courseRepo.fetchAllCourse(filterOptions);
             return result;
         } catch (error) {
             console.log("error in fetching course in course.ts");
@@ -31,6 +31,14 @@ export class CourseService {
             return result;
         } catch (error) {
             console.log("error in fetching latest course in course.ts");
+        }
+    }
+    async fetchMostRatedCourses() {
+        try {
+            const result = await this.courseRepo.fetchMostRatedCourses();
+            return result;
+        } catch (error) {
+            console.log("error in fetching fetchMostRatedCourse course in course.ts");
         }
     }
     async courseList(tutorId: string) {

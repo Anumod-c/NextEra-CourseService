@@ -18,7 +18,10 @@ export default class MessageHandler{
                 console.log('reached messagehandller for fetching Latest course',operations);
                 response= await courseController.fetchLatestCourse();
                 break;
-
+            case 'fetchMostRatedCourse':
+                console.log('reached messagehandller for fetching Latest course',operations);
+                response= await courseController.fetchMostRatedCourses();
+                break;
             case 'courseList':
                 console.log('courselist worked in messagehandler',data,operations);
                 response = await courseController.courseList(data)

@@ -20,9 +20,9 @@ class CourseController{
             
         }
     }
-    async fetchAllCourse(search:string) {
+    async fetchAllCourse(filterOptions:any) {
         try{
-            const result = await this.courseService.fetchAllCourse(search);
+            const result = await this.courseService.fetchAllCourse(filterOptions);
             console.log('reeslt from fetching course',result);
             
             return result
@@ -35,6 +35,16 @@ class CourseController{
         try{
             const result = await this.courseService.fetchLatestCourse();
             console.log('reeslt from fetching  latest course',result);   
+            return result
+        }catch(error){
+            console.log('error in addcourse',error);
+            
+        }
+    }
+    async  fetchMostRatedCourses(){
+        try{
+            const result = await this.courseService.fetchMostRatedCourses();
+            console.log('reeslt from fetching  fetchMostRatedCourse course',result);   
             return result
         }catch(error){
             console.log('error in addcourse',error);
