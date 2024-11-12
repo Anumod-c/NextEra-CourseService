@@ -187,14 +187,18 @@ console.log(filterOptions,'filteredOPtions')
     }
 }
 
-  async getCoursesByTutorId(tutorId: string) {
+  async getCoursesByTutorId(tutorId: string, page: number = 1, limit: number) {
     try {
-      const courses = await Course.find({ tutorId: tutorId });
+      const skip = (page - 1) * limit;
+      const courses = await Course.find({ tutorId: tutorId }).skip(skip).limit(limit);
+      const totalCount = await Course.countDocuments({ tutorId });
+            const totalPages = Math.ceil(totalCount / limit);
       console.log("lllllllllllllll", courses);
       if (!courses) {
         return { success: false, message: "Course not found" };
       }
-      return { success: true, message: "Course fetched successfully", courses };
+      return { success: true, message: "Course fetched successfully", courses ,totalPages,
+        currentPage: page};
     } catch (error) {
       console.log("Error in fetching coursesBy tutorId");
     }
@@ -268,15 +272,22 @@ console.log(filterOptions,'filteredOPtions')
     }
   }
 
-  async getFullCourses() {
+  async getFullCourses( page: number = 1, limit: number) {
     try {
-      const allCourse = await Course.find();
+      const skip = (page - 1) * limit;
+
+      const allCourse = await Course.find().skip(skip).limit(limit);
+      const totalCount = await Course.countDocuments();
+      const totalPages = Math.ceil(totalCount / limit);
+
       console.log("allcourses", allCourse);
       if (allCourse) {
         return {
           courses: allCourse,
           message: "Fetching course  went successfult",
           success: true,
+          totalPages,
+          currentPage: page
         };
       }
     } catch (error) {

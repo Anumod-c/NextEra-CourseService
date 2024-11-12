@@ -51,9 +51,10 @@ class CourseController{
             
         }
     }
-    async courseList(tutorId:string){
+    async courseList(data: { tutorId: string, page: number, limit: number }){
         try{
-            const result = await this.courseService.courseList(tutorId);
+            const { tutorId, page, limit } = data;
+            const result = await this.courseService.courseList(tutorId, page, limit);
             console.log('gggggggggggggggggggggggggg',result);
             
             return result;
@@ -88,9 +89,10 @@ class CourseController{
             console.log("Error in  adduser to course")
         }
     }
-    async coursetable(){
+    async coursetable(data: { page: number, limit: number }){
         try{
-            const result = await this.courseService.courseTable();
+            const {  page, limit } = data;
+            const result = await this.courseService.courseTable(page, limit);
             console.log('course table',result);
             
             return result;

@@ -41,10 +41,10 @@ export class CourseService {
             console.log("error in fetching fetchMostRatedCourse course in course.ts");
         }
     }
-    async courseList(tutorId: string) {
+    async courseList(tutorId: string, page: number = 1, limit: number) {
         try {
             console.log("tutor id from usecase", tutorId);
-            const result = await this.courseRepo.getCoursesByTutorId(tutorId);
+            const result = await this.courseRepo.getCoursesByTutorId(tutorId,page,limit);
             return result;
         } catch (error) { }
     }
@@ -73,10 +73,10 @@ export class CourseService {
             console.log("Error in  addUserid to course", error);
         }
     }
-    async courseTable() {
+    async courseTable( page: number = 1, limit: number) {
         try {
             console.log("Course table");
-            const result = await this.courseRepo.getFullCourses();
+            const result = await this.courseRepo.getFullCourses(page, limit);
             return result;
         } catch (error) { }
     }

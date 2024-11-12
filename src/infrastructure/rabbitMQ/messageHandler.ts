@@ -39,7 +39,7 @@ export default class MessageHandler{
                 response = await courseController.addUserIdToCourse(data);
                 break;
             case 'courseTable':
-                response =await courseController.coursetable();
+                response =await courseController.coursetable(data);
                 break;
             case 'get_courses_count':
                 response =await courseController.getCourseCount();
