@@ -1,4 +1,7 @@
 import { Channel } from "amqplib";
+import rabbitMQLogger from "../../../logger/rabbitLogger";
+
+
 export default class Producer{
     constructor(private channel:Channel){}
 
@@ -7,9 +10,12 @@ export default class Producer{
             this.channel.sendToQueue(replyToQueue,Buffer.from(JSON.stringify(data)),{correlationId:correlationId
 
             })
+            rabbitMQLogger.emit('messageProduced', { queue: replyToQueue, correlationId });
+
             console.log('Message produced back');
             
         }catch(error){
+            rabbitMQLogger.emit('error', error);
             console.log('Error in producing messsage back to apigateway',error);
             
         }
