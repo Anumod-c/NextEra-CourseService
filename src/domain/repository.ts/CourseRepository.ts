@@ -22,28 +22,21 @@ export class CourseRepository implements ICourseRepository {
 
   async fetchAllCourse(filterOptions: any) {
     try {
-        const { search, category, level, sort } = filterOptions;
+        const { search, category, level, sort,page,limit } = filterOptions;
+        const skip = (page - 1) * limit;
 console.log(filterOptions,'filteredOPtions')
         const filters: any = {
             status: true,
         };
-        if (search) {
-            filters.title = { $regex: search, $options: "i" };
-        }
-        if (category) {
-            filters.category = category;
-        }
-        if (level) {
-            filters.level = level;
-        }
-
-        // Determine sorting order
-        let sortOption: any = {};
-        if (sort === "price-asc") {
-            sortOption = { discountPrice: 1 };
-        } else if (sort === "price-desc") {
-            sortOption = { discountPrice: -1 };
-        }
+        if (search) filters.title = { $regex: search, $options: "i" };
+        if (category) filters.category = category;
+        if (level) filters.level = level;
+       
+        let sortOption: { [key: string]: 1 | -1 } = {};
+        if (sort === "price-asc") sortOption.discountPrice = 1;
+        if (sort === "price-desc") sortOption.discountPrice = -1;
+        if (sort === "rating-desc") sortOption.averageRating = -1;
+        if (sort === "rating-asc") sortOption.averageRating = 1;
 
         // Build the aggregation pipeline
         const pipeline = [
@@ -73,13 +66,17 @@ console.log(filterOptions,'filteredOPtions')
             pipeline.push({ $sort: sortOption });
         }
 
-        const allCourse = await Course.aggregate(pipeline);
-
-        console.log("allCourse result in repo:", allCourse);
+        const allCourse = await Course.aggregate(pipeline).skip(skip).limit(limit);;
+        const totalCount = await Course.countDocuments();
+        const totalPages = Math.ceil(totalCount / limit);
+  
+        console.log("allCourse result in repo:", allCourse,totalCount,totalPages);
         return {
             courses: allCourse,
             message: "Fetching courses was successful",
             success: true,
+            totalPages,
+            currentPage: page
         };
     } catch (error) {
         console.log("error in fetching courses in repo:", error);
