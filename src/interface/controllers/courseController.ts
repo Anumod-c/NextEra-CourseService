@@ -41,6 +41,16 @@ class CourseController{
             
         }
     }
+    async  mostPurchasedCourse(){
+        try{
+            const result = await this.courseService.mostPurchasedCourse();
+            console.log('reeslt from fetching  mostPurchasedCourse course',result);   
+            return result
+        }catch(error){
+            console.log('error in addcourse',error);
+            
+        }
+    }
     async  fetchMostRatedCourses(){
         try{
             const result = await this.courseService.fetchMostRatedCourses();
@@ -167,6 +177,17 @@ class CourseController{
             return result
         } catch (error) {
             console.log("Error in fetching review and rating",error)
+        }
+    }
+    async getStudentEnrollments(tutorId:string){
+        try {
+            console.log('courseId frogetStudentEnrollments',tutorId)
+            const result = await this.courseService.getStudentEnrollments(tutorId);
+            console.log('getStudentEnrollments',result)
+
+            return result
+        } catch (error) {
+            console.log("Error in getStudentEnrollments",error)
         }
     }
     

@@ -87,49 +87,105 @@ console.log(filterOptions,'filteredOPtions')
     }
 }
 
-  async fetchLatestCourse() {
+async fetchLatestCourse() {
+  try {
+    const LatestCourses = await Course.aggregate([
+      {
+        $match: { 
+          status: true 
+        }
+      },
+      {
+        $lookup: {
+          from: 'reviews', // Name of the reviews collection
+          localField: '_id',
+          foreignField: 'courseId',
+          as: 'reviews'
+        }
+      },
+      {
+        $addFields: {
+          averageRating: { $avg: "$reviews.rating" } // Calculate average rating from reviews
+        }
+      },
+      {
+        $project: {
+          reviews: 0 // Exclude reviews array if not needed in the output
+        }
+      }
+    ]).sort({createdAt:-1}).limit(5)
+    console.log("LatestCourses", LatestCourses);
+    if (LatestCourses) {
+      return {
+        courses: LatestCourses,
+        message: "Fetching course  went successfult",
+        success: true,
+      };
+    }
+  } catch (error) {
+    console.log("fetch all course error", error);
+    return {
+      success: false,
+      message: "Course fetch courses. Please try again",
+    };
+  }
+}
+  async  fetchMostPurchasedCourse() {
     try {
-      const LatestCourses = await Course.aggregate([
+      const mostPurchasedCourses = await Course.aggregate([
         {
-          $match: { 
-            status: true 
-          }
-        },
-        {
-          $lookup: {
-            from: 'reviews', // Name of the reviews collection
-            localField: '_id',
-            foreignField: 'courseId',
-            as: 'reviews'
-          }
+          $match: {
+            status: true, // Only active courses
+          },
         },
         {
           $addFields: {
-            averageRating: { $avg: "$reviews.rating" } // Calculate average rating from reviews
-          }
+            enrolledUserCount: { $size: "$enrolledUsers" }, // Count enrolled users
+          },
+        },
+        {
+          $lookup: {
+            from: "reviews", // Join with the reviews collection
+            localField: "_id",
+            foreignField: "courseId",
+            as: "reviews",
+          },
+        },
+        {
+          $addFields: {
+            averageRating: { $avg: "$reviews.rating" }, // Calculate average rating
+          },
         },
         {
           $project: {
-            reviews: 0 // Exclude reviews array if not needed in the output
-          }
-        }
-      ]).limit(5).sort({_id:-1})
-      console.log("LatestCourses", LatestCourses);
-      if (LatestCourses) {
-        return {
-          courses: LatestCourses,
-          message: "Fetching course  went successfult",
-          success: true,
-        };
+            reviews: 0, // Exclude reviews if not required in the output
+          },
+        },
+        {
+          $sort: {
+            enrolledUserCount: -1, // Sort by most enrolled users
+          },
+        },
+        {
+          $limit: 5, // Limit to top 5 courses
+        },
+      ]);
+  
+      if (!mostPurchasedCourses || mostPurchasedCourses.length === 0) {
+        return { success: false, message: "No courses found" };
       }
-    } catch (error) {
-      console.log("fetch all course error", error);
+  
       return {
-        success: false,
-        message: "Course fetch courses. Please try again",
+        success: true,
+        message: "Most purchased courses fetched successfully",
+        courses: mostPurchasedCourses,
       };
+    } catch (error) {
+      console.error("Error fetching most purchased courses:", error);
+      return { success: false, message: "Error fetching courses" };
     }
   }
+  
   async fetchMostRatedCourses() {
     try {
         const MostRatedCourses = await Course.aggregate([
@@ -184,22 +240,62 @@ console.log(filterOptions,'filteredOPtions')
     }
 }
 
-  async getCoursesByTutorId(tutorId: string, page: number = 1, limit: number) {
-    try {
-      const skip = (page - 1) * limit;
-      const courses = await Course.find({ tutorId: tutorId }).skip(skip).limit(limit);
-      const totalCount = await Course.countDocuments({ tutorId });
-            const totalPages = Math.ceil(totalCount / limit);
-      console.log("lllllllllllllll", courses);
-      if (!courses) {
-        return { success: false, message: "Course not found" };
-      }
-      return { success: true, message: "Course fetched successfully", courses ,totalPages,
-        currentPage: page};
-    } catch (error) {
-      console.log("Error in fetching coursesBy tutorId");
+async getCoursesByTutorId(tutorId: string, page: number = 1, limit: number) {
+  try {
+    const skip = (page - 1) * limit;
+
+    const courses = await Course.aggregate([
+      {
+        $match: {
+          tutorId: tutorId,
+        },
+      },
+      {
+        $lookup: {
+          from: "reviews", // Name of the reviews collection
+          localField: "_id",
+          foreignField: "courseId",
+          as: "reviews",
+        },
+      },
+      {
+        $addFields: {
+          averageRating: { $ifNull: [{ $avg: "$reviews.rating" }, 0] }, 
+        },
+      },
+      {
+        $project: {
+          reviews: 0, // Exclude the reviews array if not needed
+        },
+      },
+      {
+        $skip: skip, // Pagination: skip results
+      },
+      {
+        $limit: limit, // Pagination: limit results
+      },
+    ]);
+
+    const totalCount = await Course.countDocuments({ tutorId });
+    const totalPages = Math.ceil(totalCount / limit);
+
+    if (!courses || courses.length === 0) {
+      return { success: false, message: "Courses not found" };
     }
+
+    return {
+      success: true,
+      message: "Courses fetched successfully",
+      courses,
+      totalPages,
+      currentPage: page,
+    };
+  } catch (error) {
+    console.error("Error in fetching courses by tutorId:", error);
+    return { success: false, message: "Error in fetching courses" };
   }
+}
+
   async getSingleCourse(courseId: string) {
     try {
         const course = await Course.aggregate([
@@ -242,16 +338,46 @@ console.log(filterOptions,'filteredOPtions')
   async fetchMyCourses(enrolledCourses: string[]) {
     try {
       console.log(enrolledCourses, "enrolledCourses");
-      const courses = await Course.find({ _id: { $in: enrolledCourses } });
-      console.log(courses);
-      if (!courses) {
-        return { success: false, message: "Course not found" };
+  
+      const courses = await Course.aggregate([
+        {
+          $match: {
+            _id: { $in: enrolledCourses.map(courseId => new mongoose.Types.ObjectId(courseId)) }
+          }
+        },
+        {
+          $lookup: {
+            from: 'reviews', // Name of the reviews collection
+            localField: '_id',
+            foreignField: 'courseId',
+            as: 'reviews'
+          }
+        },
+        {
+          $addFields: {
+            averageRating: { $avg: "$reviews.rating" } // Calculate average rating from reviews
+          }
+        },
+        {
+          $project: {
+            reviews: 0 // Exclude reviews array if not needed in the output
+          }
+        }
+      ]);
+  
+      console.log("My Courses:", courses);
+  
+      if (!courses || courses.length === 0) {
+        return { success: false, message: "Courses not found" };
       }
-      return { success: true, message: "Course fetched successfully", courses };
+  
+      return { success: true, message: "Courses fetched successfully", courses };
     } catch (error) {
-      console.log("Error in fetching my courses form cours db", error);
+      console.log("Error in fetching my courses from course db", error);
+      return { success: false, message: "Error fetching courses. Please try again" };
     }
   }
+  
   async addUserIdToCourse(data: any) {
     try {
       const { userId, courseId } = data;
@@ -398,5 +524,25 @@ console.log(filterOptions,'filteredOPtions')
     } catch (error) {
       console.log("Error in posting review and rating", error);
     }
+  }
+  async getStudentEnrollments(tutorId:string){
+    try {
+      const enrollmentData = await Course.aggregate([
+        { $match: { tutorId } },
+        { $project: { courseName: "$title", enrolledCount: { $size: "$enrolledUsers" } } },
+      ]);
+      return {
+        success: true,
+        message: "Successfully fetched enrolled students count.",
+        enrollmentData,
+      };
+    } catch (error) {
+      console.error("Error fetching student enrollments:", error);
+    }
+    return {
+      success: false,
+      message: "Failed to fetch enrolled students count.",
+      enrollmentData: [],
+    };
   }
 }

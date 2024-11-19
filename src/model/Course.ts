@@ -4,27 +4,51 @@ import { ICourse } from "../domain/entities/ICourse";
 
 export interface ICourseDocument  extends ICourse,Document{}
 
+// Option Schema
+const optionSchema = new mongoose.Schema({
+  text: {
+    type: String,
+    required: true,
+  },
+  isCorrect: {
+    type: Boolean,
+    required: true,
+  },
+});
 
+// Quiz Schema
+const quizSchema = new mongoose.Schema({
+  question: {
+    type: String,
+    required: true,
+  },
+  options: [optionSchema], // Array of options
+});
+
+
+// Lesson Schema
 const lessonSchema = new mongoose.Schema({
-    title: {
-      type: String,
-      required: true,
-    },
-    description: {
-      type: String,
-    },
-    video: {
-      type: String,
-      required: true,
-    },
-  });
+  title: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+  video: {
+    type: String, 
+    required: true,
+  },
+  quizzes: [quizSchema],
+});
 
   const sectionSchema = new mongoose.Schema({
     title: {
       type: String,
       required: true,
     },
-    lessons: [lessonSchema], // Array of lessons
+    lessons: [lessonSchema], 
   });
 const courseSchema:Schema=new Schema({
     tutorId: { type: String, required: true },
@@ -57,25 +81,28 @@ const courseSchema:Schema=new Schema({
       },
       level: {
         type: String,
-        enum: ['Beginner', 'Intermediate', 'Advanced'], // Limit level to specific values
+        enum: ['Beginner', 'Intermediate', 'Advanced'], 
         required: true,
       },
       demoURL: {
         type: String,
+        required: true,
       },
       prerequisites: [{
-        type: String, // Array of strings for prerequisites
+        type: String,
+        required: true,
       }],
       benefits: [{
-        type: String, // Array of strings for benefits
+        type: String,
+        required: true, 
       }],
-      enrolledUsers: [{  // Change to plural to match the code
+      enrolledUsers: [{  
         type: Schema.Types.ObjectId,
-        ref: 'User', // Optional: If you want to reference the User model
+        ref: 'User', 
     }],
-      sections: [sectionSchema], // Array of sections
+      sections: [sectionSchema], 
     }, {
-      timestamps: true, // Automatically add createdAt and updatedAt timestamps
+      timestamps: true, 
     });
 
 export const Course=  mongoose.model<ICourseDocument>('Course',courseSchema);

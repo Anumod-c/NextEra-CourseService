@@ -33,6 +33,15 @@ export class CourseService {
             console.log("error in fetching latest course in course.ts");
         }
     }
+    async mostPurchasedCourse() {
+        try {
+            const result = await this.courseRepo.fetchMostPurchasedCourse();
+            return result;
+        } catch (error) {
+            console.log("error in fetching mostPurchasedCourse course in course.ts");
+        }
+    }
+    
     async fetchMostRatedCourses() {
         try {
             const result = await this.courseRepo.fetchMostRatedCourses();
@@ -142,6 +151,17 @@ export class CourseService {
             return result
         } catch (error) {
             console.log("Error in posting review and rating",error)
+        }
+    }
+    async getStudentEnrollments(tutorId:string){
+        try {
+            console.log('getStudentEnrollments',tutorId)
+            const result = await this.courseRepo.getStudentEnrollments(tutorId);
+            console.log('getStudentEnrollments',result)
+
+            return result
+        } catch (error) {
+            console.log("Error in posting getStudentEnrollments",error)
         }
     }
 }
